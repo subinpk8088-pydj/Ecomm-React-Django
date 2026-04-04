@@ -9,6 +9,17 @@ import {
 } from "recharts";
 
 function Dashboard() {
+  // 🔐 ADMIN PROTECTION
+  const isAdmin = localStorage.getItem("is_admin");
+
+  if (isAdmin !== "true") {
+    return (
+      <div style={{ padding: "20px" }}>
+        <h2>❌ Access Denied (Admin only)</h2>
+      </div>
+    );
+  }
+
   const [data, setData] = useState(null);
   const [latest, setLatest] = useState([]);
 

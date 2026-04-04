@@ -2,12 +2,16 @@ import { Link, useNavigate } from "react-router-dom";
 
 function Navbar() {
   const token = localStorage.getItem("token");
+  const isAdmin = localStorage.getItem("is_admin");
+
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("is_admin");
+
     alert("Logged out successfully");
-    navigate("/login"); // redirect
+    navigate("/login");
   };
 
   return (
@@ -24,11 +28,13 @@ function Navbar() {
 
       {token && <Link style={linkStyle} to="/orders">Orders</Link>}
 
-      {token && <Link style={linkStyle} to="/dashboard">Dashboard</Link>}
+      {/* 🔥 ONLY ADMIN CAN SEE */}
+      {isAdmin === "true" && (
+        <Link style={linkStyle} to="/dashboard">Dashboard</Link>
+      )}
 
       {!token && <Link style={linkStyle} to="/login">Login</Link>}
 
-      {/* 🔥 LOGOUT BUTTON */}
       {token && (
         <button onClick={handleLogout} style={buttonStyle}>
           Logout

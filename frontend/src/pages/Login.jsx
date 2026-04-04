@@ -26,11 +26,17 @@ function Login() {
 
     if (data.access) {
       localStorage.setItem("token", data.access);
+      localStorage.setItem("is_admin", data.is_admin); // 🔥 STORE ROLE
 
       alert("Login successful");
 
-      // 🔥 REDIRECT AFTER LOGIN
-      navigate("/dashboard");
+      // 🔥 ROLE BASED REDIRECT
+      if (data.is_admin) {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
+
     } else {
       alert("Login failed");
     }

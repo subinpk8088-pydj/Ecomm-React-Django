@@ -1,10 +1,9 @@
 from django.shortcuts import render
-
-# Create your views here.
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
 
 User = get_user_model()
 
@@ -17,7 +16,6 @@ def register_user(request):
     phone_number = data.get('phone_number')
     name = data.get('name')
 
-    # check missing fields
     if not username or not password or not phone_number or not name:
         return Response({'error': 'All fields are required'}, status=400)
 
@@ -36,13 +34,11 @@ def register_user(request):
 
     return Response({'message': 'User registered successfully'}, status=201)
 
-from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
 
 @api_view(['POST'])
 def login_user(request):
-    username = request.data['username']
-    password = request.data['password']
+    username = request.data.get('username')
+    password = request.data.get('password')
 
     user = authenticate(username=username, password=password)
 
@@ -54,4 +50,5 @@ def login_user(request):
     return Response({
         'refresh': str(refresh),
         'access': str(refresh.access_token),
+        'is_admin': user.is_staff  # 🔥 IMPORTANT
     })
