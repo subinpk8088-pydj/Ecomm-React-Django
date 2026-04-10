@@ -49,12 +49,17 @@ from django.db.models import Count
 
 User = get_user_model()
 
+from django.db.models import Sum
+
 @api_view(['GET'])
 def admin_dashboard(request):
     total_users = User.objects.count()
     total_orders = Order.objects.count()
 
-    # Orders per product
+    # 💰 Total revenue
+    total_revenue = sum([order.product.price for order in Order.objects.all()])
+
+    # 📊 Product stats
     product_data = (
         Order.objects.values('product__title')
         .annotate(count=Count('id'))
@@ -63,9 +68,9 @@ def admin_dashboard(request):
     return Response({
         "total_users": total_users,
         "total_orders": total_orders,
+        "total_revenue": total_revenue,  # 🔥 NEW
         "product_data": product_data
     })
-    
     
 @api_view(['GET'])
 def latest_orders(request):
